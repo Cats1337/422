@@ -1,0 +1,15 @@
+task helloWorld {
+		dependsOn << world << hello
+}
+
+task world {
+		doLast {
+				println "World"
+		}
+}
+
+task hello {
+		doLast {
+				print "Hello, "
+		}
+}

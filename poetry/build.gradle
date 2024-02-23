@@ -1,0 +1,12 @@
+apply plugin: 'java'
+
+repositories {
+	mavenCentral()
+}
+dependencies {
+	implementation 'commons-codec:commons-codec:1.6'
+}
+task raven(type: JavaExec) {
+	main = 'org.gradle.poetry.Poetry'
+	classpath = sourceSets.main.runtimeClasspath
+}
