@@ -1,0 +1,96 @@
+--- diffexample2.js	2024-02-09 02:28:22.711935949 +0000
++++ part1.js	2024-02-09 02:10:53.675906035 +0000
+@@ -1,42 +1,59 @@
+-/*
+-Created by a student
+-ISTE 422: Exercise 2: Improvised ETL
+-Date: 2/5/2016
+-Software used: Nodejs (No extra dependencies)
+-Why?: The reason I used nodejs is because we are dealing
+-with a json data format and nodejs is built to handle
+-that natively without any external plugins
+-*/
+-
+-//Node JS dependencies for reading and writing files to the file system.
+-var fs = require('fs');
+-//Read the file from the file system
+-var obj = JSON.parse(fs.readFileSync('./data.json','utf8'));
+-//get the date from the first item.
+-var date = new Date(obj[0].timestamp);
+-//format the date to the YYYYMMDD.csv required for the submission.
+-var datef = date.getFullYear() + pad2(date.getMonth()+1) + pad2(date.getDate());
+-//to return string object
+-var csv = ""
+-//for loop to parse all items
+-for(var i = 0; i < obj.length; i++){
+-  //item is a single person
+-  var item = obj[i];
+-  //check if item has a creditcard then save the :name and :creditcard to the cvs object in the cvs format
+-  if(item.creditcard != null){
+-    csv += item.name + "," + item.creditcard + "\n";
++// Node JS dependencies for reading and writing files to the file system.
++const fs = require("fs");
++const readline = require("readline");
++
++// Create a readline interface to read from stdin
++const rl = readline.createInterface({
++  input: process.stdin,
++  output: process.stdout,
++  terminal: false,
++});
++
++// Read lines from stdin
++const lines = [];
++rl.on("line", (line) => {
++  lines.push(line);
++});
++
++// When stdin ends, process the data
++rl.on("close", () => {
++  // Join lines into a single string (assumes JSON is on a single line)
++  const jsonStr = lines.join("");
++
++  // Parse the JSON data
++  const obj = JSON.parse(jsonStr);
++
++  // Get the date from the first item.
++  const date = new Date(obj[0].timestamp);
++
++  // Format the date to the YYYYMMDD.csv required for the submission.
++  const datef =
++    date.getFullYear() + pad2(date.getMonth() + 1) + pad2(date.getDate());
++
++  // To return string object
++  let csv = "";
++
++  // For loop to parse all items
++  for (let i = 0; i < obj.length; i++) {
++    // Item is a single person
++    const item = obj[i];
++
++    // Check if item has an email and credit card, then save the :name and :creditcard to the cvs object in the CSV format
++    if (item.email != null && item.creditcard != null) {
++      csv += item.name + "," + item.creditcard + "\n";
++    }
+   }
+-}
+ 
+-//store the compiled cvs in a file formated YYYYMMDD.csv
+-fs.writeFile("./" + datef + ".csv", csv, function(err) {
+-    if(err) {
+-        return console.log(err);
++  // Store the compiled CSV in a file formatted YYYYMMDD.csv
++  fs.writeFile("./" + datef + ".csv", csv, (err) => {
++    if (err) {
++      return console.log(err);
+     }
+     console.log("The file was saved!");
++  });
+ });
+ 
+-//formating functino for manking numbebers 2 digits ex "2" -> "02"
++// Formatting function for making numbers 2 digits ex "2" -> "02"
+ function pad2(number) {
+-     return (number < 10 ? '0' : '') + number
++  return (number < 10 ? "0" : "") + number;
+ }

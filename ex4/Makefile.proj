@@ -1,0 +1,66 @@
+# Part 2
+# The final Makefile.proj is the makefile you will generate to build our class project, rit-iste422-project. You will need 5 targets that will: 
+#     1) build the java files 
+#     2) run the java tests 
+#     3) run the program
+#     4) clean all the .class files 
+#     5) an "all" target that cleans, builds, runs tests, and runs app.
+
+# Note that there is a dependency when running the unit test(s) and application: the Java files need to be compiled into classes! The dependencies should be structured so that you can run the app without needing to run the tests. Also, a user shouldn't need to know that they have to run your compilation target to run the tests or run the app, it should be automatic. See the image (at the bottom) from a prior class showing a skeleton/sketch of a makefile.
+
+# The Java filenames can be hardcoded as dependencies and targets, or you can use the techniques learned when creating Makefile.cw2 and .cw3 for variable substitution. Review the functions here for variable manipulation, especially 'shell', 'wildcard', and 'patsubst': https://www.gnu.org/software/make/manual/html_node/Functions.html#Functions
+
+# rit-iste422-project: build.sh
+#!/bin/sh
+
+# echo "Cleaning existing classes..."
+# rm -f build/*.class
+# # This command looks for matching files and runs the rm command for each file
+# # Note that {} are replaced with each file name
+# find . -name \*.class -exec rm {} \;
+
+# echo "Compiling source code and unit tests..."
+# javac -cp .:lib/junit-4.12.jar:lib/hamcrest-core-1.3.jar -d build src/main/java/*.java src/test/java/*Test.java
+# if [ $? -ne 0 ] ; then echo BUILD FAILED!; exit 1; fi
+
+# echo "Running unit tests..."
+# java -cp .:lib/junit-4.12.jar:lib/hamcrest-core-1.3.jar:build org.junit.runner.JUnitCore EdgeConnectorTest
+# if [ $? -ne 0 ] ; then echo TESTS FAILED!; exit 1; fi
+
+# echo "Running application..."
+# java -cp .:build RunEdgeConvert
+
+
+# Define Java compiler and flags
+# Define directories
+SRC_DIR = rit-iste422-project
+TEST_DIR = test
+
+# Define Java compiler and flags
+JFLAGS = -cp .:lib/junit-4.12.jar:lib/hamcrest-core-1.3.jar -d build
+
+# Define the Java source and test files
+JAVA_FILES = $(wildcard $(SRC_DIR)/*.java)
+TEST_FILES = $(wildcard $(TEST_DIR)/*Test.java)
+
+# Define targets
+all: clean build test run
+
+build: $(JAVA_FILES)
+	javac -cp .:lib/junit-4.12.jar:lib/hamcrest-core-1.3.jar -d build $^
+
+test: build $(TEST_FILES)
+	@echo "Running Java tests..."
+	@java -cp .:lib/junit-4.12.jar:lib/hamcrest-core-1.3.jar:build org.junit.runner.JUnitCore $(patsubst $(TEST_DIR)/%Test.java,%,$(TEST_FILES))
+
+run: build
+	@echo "Running the application..."
+	@java -cp .:build RunEdgeConvert
+
+clean:
+	@echo "Cleaning up..."
+	@rm -rf build/*.class
+
+.PHONY: all build test run clean
+
+

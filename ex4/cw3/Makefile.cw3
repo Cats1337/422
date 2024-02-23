@@ -1,0 +1,8 @@
+VPATH = src include
+CPPFLAGS = -I include
+
+countWords : counter.o lexer.o
+	gcc $^ -o $@ -L/nix/store/sm1igy7xz1c54l14mzi562x4km55i7vg-flex-2.6.4/lib -lfl
+countWords.o : counter.h
+counter.o : counter.h lexer.h
+lexer.o : lexer.h
